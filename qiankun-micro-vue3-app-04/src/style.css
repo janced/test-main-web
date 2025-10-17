@@ -1,0 +1,99 @@
+/* 
+  这个文件中的样式是为 独立运行的单页面应用（SPA） 设计的，当它被注入到微前端环境中时，会对基座和容器产生意想不到的副作用。
+  该文件是vite自动生成，所以在子应用中应注意修改这个文件，本文件保留了删除的部分以及删除的原因，以供修改子应用时参考。
+*/
+
+/* 删除原因：
+  :root 在 HTML 中等同于 html 标签。
+  文件中的 :root { ... } 规则会修改整个页面的 font-family, color, background-color 等基础样式。
+  这会导致基座应用的字体、颜色、背景色被 Vue3 子应用的样式覆盖，造成视觉上的混乱。
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} */
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+/* 删除原因：
+  1、place-items: center; 是 align-items: center; 和 justify-content: center; 的简写。
+  2、当 qiankun 加载子应用时，它会获取子应用的 index.html 的 <body> 标签内的所有内容（包括您应用的 <div id="app"></div>），然后将这些内容插入到基座的 <div id="container"></div> 中。
+  3、同时，子应用的 CSS（也就是这个 style.css）会被加载到主文档的 <head> 中（即使在 Shadow DOM 模式下，某些全局选择器也可能逃逸或产生非预期的影响，我们稍后讨论）。
+  4、这个 CSS 规则 body { display: flex; ... } 直接作用于了主文档的 <body> 标签。
+  5、它将基座应用的整个 <body> 变成了一个 Flexbox 容器，并试图将其所有子元素（包括基座的菜单、布局组件以及微前端容器 #container）在垂直和水平方向上都居中。
+  6、这彻底打乱了基座应用原有的布局结构！您的基座应用可能不是为 Flex 布局设计的，导致所有元素位置错乱，并且 #container 因为在 Flex 布局中没有被分配到具体的空间而坍塌（宽度变为0）。
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+} */
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.card {
+  padding: 2em;
+}
+
+#app {
+  /* 删除原因：
+    对于 #app 的样式，也建议先注释掉，或者移除 max-width 和 margin: 0 auto，只保留 text-align: center 等无害的样式。
+  max-width: 1280px;
+  margin: 0 auto; 
+  padding: 2rem; */
+  text-align: center;
+  width: 100%; /* 让 #app 撑满 qiankun 的 #container */
+  height: 100%;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
